@@ -1,12 +1,14 @@
 import { faker } from "@faker-js/faker";
-import User from "../page_objects/User";
+import Login from "../page_objects/Login";
+import Produto from "../page_objects/Produto";
+import Usuario from "../page_objects/Usuario";
 
-const user = new User()
+const { loginAPI } = new Login()
+const { produtosAPI } = new Produto()
+const { usuariosAPI } = new Usuario()
 
 describe('Product Test', () => {
   it('Should register a product, edit and delete a product', () => {
-    let token, produtoID;
-    const { email, password } = user.default // Default user
     const produto = {
       nome: faker.commerce.product(),
       preco: Math.round(faker.commerce.price()),
@@ -14,41 +16,70 @@ describe('Product Test', () => {
       quantidade: 10
     }
 
-    // Login with a valid user
-    cy.request('POST', 'https://serverest.dev/login', { email, password }).then(loginResponse => {
-      expect(loginResponse.status).to.eq(200)
-      token = loginResponse.body.authorization;
+    usuariosAPI({ method: 'GET' }).then(usuarioResponse => {
+      const { usuarios } = usuarioResponse.body;
+      const admins = usuarios.filter(usuario => usuario.administrador === "true");
+      const { email, password } = admins[0];
 
-      // Register a product
-      cy.request({
-        method: 'POST',
-        url: 'https://serverest.dev/produtos',
-        headers: {
-          'accept': 'application/json',
-          Authorization: token,
-          'Content-type': 'application/json'
-        },
-        body: produto
-      }).then(produtoResponse => {
-        console.log("Response: ", produtoResponse)
-        if (produtoResponse.statusText === 'Created') {
-          expect(produtoResponse.status).to.eq(201)
-          expect(produtoResponse.body.message).to.eq('Cadastro realizado com sucesso')
-        } else {
-          expect(produtoResponse.body.message).to.eq('Já existe produto com esse nome')
-        }
-        produtoID = produtoResponse.body._id;
+      // Login with a valid user
+        loginAPI({ email, password }).then(loginResponse => {
+        expect(loginResponse.status).to.eq(200)
+        const Authorization = loginResponse.body.authorization;
 
-        // Check if the product was registered
-        cy.request('GET', `https://serverest.dev/produtos/${produtoID}`).then(getProdutoResponse => {
-          console.log(getProdutoResponse)
-          const { nome, preco, descricao, quantidade } = getProdutoResponse.body;
-          expect(nome).to.eq(produto.nome)
-          expect(preco).to.eq(produto.preco)
-          expect(descricao).to.eq(produto.descricao)
-          expect(quantidade).to.eq(produto.quantidade)
-        })
-      });
+        // Register a product
+        produtosAPI({
+          method: 'POST',
+          token: Authorization,
+          body: produto
+        }).then(produtoResponse => {
+          if (produtoResponse.statusText === 'Created') {
+            expect(produtoResponse.status).to.eq(201)
+            expect(produtoResponse.body.message).to.eq('Cadastro realizado com sucesso')
+          } else {
+            expect(produtoResponse.body.message).to.eq('Já existe produto com esse nome')
+          }
+          const { _id } = produtoResponse.body;
+
+          // Check if the product was registered
+          produtosAPI({
+            method: 'GET',
+            _id,
+            token: Authorization,
+          }).then(getProdutoResponse => {
+            const { nome, preco, descricao, quantidade } = getProdutoResponse.body;
+            expect(nome).to.eq(produto.nome)
+            expect(preco).to.eq(produto.preco)
+            expect(descricao).to.eq(produto.descricao)
+            expect(quantidade).to.eq(produto.quantidade)
+          })
+
+          // Edit the product
+          produtosAPI({
+            method: 'PUT',
+            _id,
+            token: Authorization,
+            body: {
+              nome: faker.commerce.productName(),
+              preco: Math.round(faker.commerce.price()),
+              descricao: faker.commerce.productDescription(),
+              quantidade: 100
+            }
+          }).then(editProdutoResponse => {
+            expect(editProdutoResponse.status).to.eq(200)
+            expect(editProdutoResponse.body.message).to.eq('Registro alterado com sucesso')
+          })
+
+          // Delete the product
+          produtosAPI({
+            method: 'DELETE',
+            _id,
+            token: Authorization
+          }).then(deleteResponse => {
+            expect(deleteResponse.status).to.eq(200)
+            expect(deleteResponse.body.message).to.eq('Registro excluído com sucesso')
+          })
+        });
+      })
     })
   });
 });

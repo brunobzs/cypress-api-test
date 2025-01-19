@@ -1,28 +1,39 @@
-import User from "../page_objects/User";
+import Carrinho from "../page_objects/Carrinho";
+import Login from "../page_objects/Login";
+import Usuario from "../page_objects/Usuario";
 
-const user = new User();
+const { carrinhoAPI } = new Carrinho();
+const { loginAPI } = new Login();
+const usuarioPage = new Usuario();
 
 describe('Shopping Cart Tests', () => {
   let authToken;
-  const serveRestURL = 'https://serverest.dev';
-  const usuariosURL = `${serveRestURL}/usuarios`
-  const carrinhosURL = `${serveRestURL}/carrinhos`;
+  const novoUsuario = usuarioPage.newUser;
 
   before(() => {
-    cy.request('GET', `${usuariosURL}?email=${user.default.email}`).then((response) => {
+    // Check if the default user exists and delete it if found
+    // cy.request('GET', `https://serverest.dev/usuarios?email=${loginPage.user.default.email}`)
+    usuarioPage.usuariosAPI({
+      method: 'GET',
+      url: `https://serverest.dev/usuarios?email=${novoUsuario.email}`
+    }).then((response) => {
+      console.log(response) ;
       if (response.body.quantidade > 0) {
-        cy.request('DELETE', `${usuariosURL}/${response.body.usuarios[0]._id}`);
+        cy.request('DELETE', `https://serverest.dev/usuarios/${response.body.usuarios[0]._id}`);
       }
     });
 
-    cy.request('POST', usuariosURL, user.default).then((response) => {
-      expect(response.status).to.eq(201); // Check if the status code is 201 (Created)
-      expect(response.body.message).to.eq('Cadastro realizado com sucesso'); // Check if the response message is correct
+    // Step 1: Create the default user
+    usuarioPage.usuariosAPI({
+      method: 'POST',
+      body: novoUsuario
+    }).then(usuarioResponse => {
+      console.log(usuarioResponse.body);
 
       // Step 2: Authenticate and obtain the token
-      cy.request('POST', `${serveRestURL}/login`, {
-        email: user.default.email,
-        password: user.default.password
+      loginAPI({
+        email: novoUsuario.email,
+        password: novoUsuario.password
       }).then((response) => {
         expect(response.status).to.eq(200);
         authToken = response.body.authorization;
@@ -44,12 +55,9 @@ describe('Shopping Cart Tests', () => {
       ]
     };
 
-    cy.request({
+    carrinhoAPI({
       method: 'POST',
-      url: carrinhosURL,
-      headers: {
-        Authorization: authToken
-      },
+      authToken,
       body: produtos
     }).then((response) => {
       expect(response.status).to.eq(201);
@@ -58,12 +66,10 @@ describe('Shopping Cart Tests', () => {
   });
 
   it('Delete the cart', () => {
-    cy.request({
+    carrinhoAPI({
       method: 'DELETE',
-      url: `${carrinhosURL}/concluir-compra`,
-      headers: {
-        authorization: authToken, // Ensure `authToken` contains the valid token string
-      },
+      url: 'https://serverest.dev/carrinhos/concluir-compra',
+      authToken
     }).then((deleteResponse) => {
       expect(deleteResponse.status).to.eq(200);
       expect(deleteResponse.body.message).to.eq('Registro excluído com sucesso');
