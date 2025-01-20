@@ -1,0 +1,6 @@
+{
+  "login": "https://serverest.dev/login",
+  "usuarios": "https://serverest.dev/usuarios",
+  "produtos": "https://serverest.dev/produtos",
+  "carrinhos": "https://serverest.dev/carrinhos"
+}
