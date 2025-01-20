@@ -1,10 +1,10 @@
-import Utilities from "../support/utilities";
+import Utilities from "./utils/Utilities";
 
 let authToken;
 const apiURL = require("../fixtures/urls.json");
 const utilities = new Utilities()
 
-describe('Shopping Cart Tests', () => {
+describe('Shopping Cart API Tests', () => {
   before(() => {
     const novoUsuario = utilities.newUser
 

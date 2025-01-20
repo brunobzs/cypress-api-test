@@ -1,9 +1,9 @@
-import Utilities from "../support/utilities";
+import Utilities from "./utils/Utilities";
 
 const utilities = new Utilities()
 const apiURL = require('../fixtures/urls.json')
 
-describe('Login Tests', () => {
+describe('Login API Tests', () => {
   it('Should log in successfully', () => {
     cy.request('GET', apiURL.usuarios).then( usuariosResponse => {
       const { email, password } = usuariosResponse.body.usuarios[0]

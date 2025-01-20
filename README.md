@@ -1,4 +1,4 @@
-# Testes de API com Cypress e ServeRest
+# Testes de API com Cypress
 
 Este repositório contém testes de API automatizados usando [Cypress](https://www.cypress.io/). A API que estamos testando é a [**ServeRest**](https://serverest.dev/), que é uma API REST gratuita que simula uma loja virtual.
 
@@ -8,15 +8,15 @@ Este repositório contém testes de API automatizados usando [Cypress](https://w
 .
 ├── cypress/
 │   ├── fixtures/             # Arquivos de dados de exemplo para os testes
-│   ├── integration/          # Testes de integração da API
-│   ├── page_objects/         # Elementos de interface usando Page Objects Model (POM)
+│   ├── tests/                # Testes de integração da API
+│   │   ├── utils/            # Reúne funções reutilizáveis
 │   ├── support/              # Comandos e configurações auxiliares
 ├── cypress.json              # Configurações do Cypress
 └── README.md                 # Este arquivo
 ```
 ## Pré-requisitos
 Antes de executar os testes, é necessário ter o seguinte instalado em sua máquina:
-- Node.js (versão 12 ou superior)
+- Node.js (versão 20 ou superior)
 - NPM ou Yarn
 - Cypress instalado
 
@@ -25,8 +25,7 @@ Siga os passos abaixo para configurar o ambiente e executar os testes:
 
 1. Clone este repositório:
 ```bash
-git clone https://github.com/usuario/repositorio.git
-cd repositorio
+git clone https://github.com/brunobzs/cypress-api-test.git
 ``` 
 2. Instale as dependências do projeto:
 ```bash

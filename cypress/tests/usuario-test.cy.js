@@ -1,4 +1,4 @@
-import Utilities from "../support/utilities";
+import Utilities from "./utils/Utilities";
 
 const utilities = new Utilities()
 const apiURL = require('../fixtures/urls.json');

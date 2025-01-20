@@ -1,11 +1,11 @@
 import { faker } from "@faker-js/faker";
-import Utilities from "../support/utilities";
+import Utilities from "./utils/Utilities";
 
 const utilities = new Utilities()
 const apiURL = require('../fixtures/urls.json')
 let authToken;
 
-describe('Product Test', () => {
+describe('Product API Test', () => {
   before(() => {
     // Search for an admin user
     cy.request('GET', apiURL.usuarios).then(usuarioResponse => {
