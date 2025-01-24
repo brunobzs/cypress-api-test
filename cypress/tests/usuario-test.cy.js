@@ -1,11 +1,10 @@
-import Utilities from "./utils/Utilities";
+import Utilities from "../support/Utilities";
 
-const utilities = new Utilities()
 const apiURL = require('../fixtures/urls.json');
 
 describe('User API Test', () => {
   it('Should create a new user and delete it successfully', () => {
-    const { newUser } = utilities;
+    const { newUser } = Utilities;
 
     // Step 1: Create a new user
     cy.request('POST', apiURL.usuarios, newUser).then(createResponse => {

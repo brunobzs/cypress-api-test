@@ -1,6 +1,5 @@
-import Utilities from "./utils/Utilities";
+import Utilities from "../support/Utilities";
 
-const utilities = new Utilities()
 const apiURL = require('../fixtures/urls.json')
 
 describe('Login API Tests', () => {
@@ -17,7 +16,7 @@ describe('Login API Tests', () => {
   })
 
   it('Should not log in with invalid credentials', () => {
-    const { email, password } = utilities.newUser
+    const { email, password } = Utilities.newUser
 
     cy.request({
       method: 'POST',

@@ -1,7 +1,6 @@
 import { faker } from "@faker-js/faker";
-import Utilities from "./utils/Utilities";
+import Utilities from "../support/Utilities";
 
-const utilities = new Utilities()
 const apiURL = require('../fixtures/urls.json')
 let authToken;
 
@@ -22,7 +21,7 @@ describe('Product API Test', () => {
   })
 
   it('Should register a product, edit and delete a product', () => {
-    const produto = utilities.newProduct;
+    const produto = Utilities.newProduct;
 
     // Register a product
     cy.request({

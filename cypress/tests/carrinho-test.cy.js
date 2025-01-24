@@ -1,12 +1,11 @@
-import Utilities from "./utils/Utilities";
+import Utilities from "../support/Utilities";
 
 let authToken;
 const apiURL = require("../fixtures/urls.json");
-const utilities = new Utilities()
 
 describe('Shopping Cart API Tests', () => {
   before(() => {
-    const novoUsuario = utilities.newUser
+    const novoUsuario = Utilities.newUser
 
     // Step 1: Check if the default user exists and delete it if found
     cy.request({
@@ -34,19 +33,6 @@ describe('Shopping Cart API Tests', () => {
   });
 
   it('Should create a new cart for the user', () => {
-    const produtos = {
-      produtos: [
-        {
-          "idProduto": "BeeJh5lz3k6kSIzA",
-          "quantidade": 1
-        },
-        {
-          "idProduto": "K6leHdftCeOJj8BJ",
-          "quantidade": 3
-        }
-      ]
-    };
-
     // Create a cart with specified products
     cy.request({
       method: 'POST',
@@ -54,7 +40,18 @@ describe('Shopping Cart API Tests', () => {
       headers: {
         Authorization: authToken
       },
-      body: produtos
+      body: {
+        produtos: [
+          {
+            "idProduto": "BeeJh5lz3k6kSIzA",
+            "quantidade": 1
+          },
+          {
+            "idProduto": "K6leHdftCeOJj8BJ",
+            "quantidade": 3
+          }
+        ]
+      }
     }).then(response => {
       expect(response.status).to.eq(201); // Verify cart creation status is 201
       expect(response.body.message).to.eq('Cadastro realizado com sucesso'); // Confirm success message

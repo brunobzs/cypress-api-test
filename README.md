@@ -9,8 +9,7 @@ Este repositório contém testes de API automatizados usando [Cypress](https://w
 ├── cypress/
 │   ├── fixtures/             # Arquivos de dados de exemplo para os testes
 │   ├── tests/                # Testes de integração da API
-│   │   ├── utils/            # Reúne funções reutilizáveis
-│   ├── support/              # Comandos e configurações auxiliares
+│   └── support/              # Comandos e configurações auxiliares
 ├── cypress.json              # Configurações do Cypress
 └── README.md                 # Este arquivo
 ```

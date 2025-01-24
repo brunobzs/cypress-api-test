@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker';
 
 class Utilities {
+  static newUser;
   get newUser() {
     return {
       nome: faker.person.fullName(),
@@ -20,4 +21,4 @@ class Utilities {
   }
 }
 
-export default Utilities;
+export default new Utilities();
