@@ -1,13 +1,11 @@
-import Utilities from "../support/Utilities";
+import {faker} from "@faker-js/faker";
 
-const apiURL = require('../fixtures/urls.json')
-
-describe('Login API Tests', () => {
+describe('Login', () => {
   it('Should log in successfully', () => {
-    cy.request('GET', apiURL.usuarios).then( usuariosResponse => {
+    cy.request('GET', '/usuarios').then( usuariosResponse => {
       const { email, password } = usuariosResponse.body.usuarios[0]
 
-      cy.request('POST', apiURL.login, { email, password }).then(response => {
+      cy.request('POST', '/login', { email, password }).then(response => {
         // Verify successful authentication
         expect(response.status).to.eq(200)
         expect(response.body.message).to.eq('Login realizado com sucesso')
@@ -16,13 +14,12 @@ describe('Login API Tests', () => {
   })
 
   it('Should not log in with invalid credentials', () => {
-    const { email, password } = Utilities.newUser
-
     cy.request({
       method: 'POST',
-      url: apiURL.login,
+      url: '/login',
       body: {
-        email, password
+        email: faker.internet.email(),
+        password: faker.internet.password(),
       },
       failOnStatusCode: false
     }).then(response => {

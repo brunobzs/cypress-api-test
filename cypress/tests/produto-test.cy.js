@@ -1,19 +1,17 @@
 import { faker } from "@faker-js/faker";
-import Utilities from "../support/Utilities";
 
-const apiURL = require('../fixtures/urls.json')
 let authToken;
 
-describe('Product API Test', () => {
+describe('Product', () => {
   before(() => {
     // Search for an admin user
-    cy.request('GET', apiURL.usuarios).then(usuarioResponse => {
+    cy.request('GET', '/usuarios').then(usuarioResponse => {
       const { usuarios } = usuarioResponse.body;
       const admins = usuarios.filter(usuario => usuario.administrador === "true");
       const { email, password } = admins[0];
 
       // Login with a valid admin user
-      cy.request('POST', apiURL.login, { email, password }).then(loginResponse => {
+      cy.request('POST', '/login', { email, password }).then(loginResponse => {
         expect(loginResponse.status).to.eq(200)
         authToken = loginResponse.body.authorization;
       });
@@ -21,12 +19,17 @@ describe('Product API Test', () => {
   })
 
   it('Should register a product, edit and delete a product', () => {
-    const produto = Utilities.newProduct;
+    const produto = {
+      nome: faker.commerce.product(),
+      preco: Math.round(faker.commerce.price()),
+      descricao: faker.commerce.productDescription(),
+      quantidade: Math.floor(Math.random() * 1000) + 1
+    };
 
     // Register a product
     cy.request({
       method: 'POST',
-      url: apiURL.produtos,
+      url: '/produtos',
       headers: {
         Authorization: authToken
       },
@@ -44,7 +47,7 @@ describe('Product API Test', () => {
       // Check if the product was registered
       cy.request({
         method: 'GET',
-        url: `${apiURL.produtos}/${_id}`,
+        url: `/produtos/${_id}`,
         headers: {
           Authorization: authToken
         }
@@ -60,7 +63,7 @@ describe('Product API Test', () => {
       // Edit the product
       cy.request({
         method: 'PUT',
-        url: `${apiURL.produtos}/${_id}`,
+        url: `/produtos/${_id}`,
         headers: {
           Authorization: authToken
         },
@@ -78,7 +81,7 @@ describe('Product API Test', () => {
       // Delete the product
       cy.request({
         method: 'DELETE',
-        url: `${apiURL.produtos}/${_id}`,
+        url: `/produtos/${_id}`,
         headers: {
           Authorization: authToken
         }

@@ -5,9 +5,7 @@ Este repositório contém testes de API automatizados usando [Cypress](https://w
 ## Estrutura do Repositório
 
 ```plaintext
-.
 ├── cypress/
-│   ├── fixtures/             # Arquivos de dados de exemplo para os testes
 │   ├── tests/                # Testes de integração da API
 │   └── support/              # Comandos e configurações auxiliares
 ├── cypress.json              # Configurações do Cypress

@@ -1,32 +1,32 @@
-import Utilities from "../support/Utilities";
+import {faker} from "@faker-js/faker";
 
-let authToken;
-const apiURL = require("../fixtures/urls.json");
+describe('Shopping Cart', () => {
+  let authToken;
+  const novoUsuario = {
+    nome: faker.person.fullName(),
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+    administrador: "true"
+  };
 
-describe('Shopping Cart API Tests', () => {
   before(() => {
-    const novoUsuario = Utilities.newUser
-
     // Step 1: Check if the default user exists and delete it if found
-    cy.request({
-      method: 'GET',
-      url: `${apiURL.usuarios}?email=${novoUsuario.email}`
-    }).then(response => {
+    cy.request({ method: 'GET', url: `/usuarios?email=${novoUsuario.email}`}).then(response => {
       if (response.body.quantidade > 0) {
         const { _id } = response.body.usuarios[0];
-        cy.request('DELETE', `${apiURL.usuarios}/${_id}`);
+        cy.request('DELETE', `/usuarios/${_id}`);
       }
 
       // Step 2: Create the default user
-      cy.request('POST', apiURL.usuarios, novoUsuario).then(usuarioResponse => {
+      cy.request('POST', '/usuarios', novoUsuario).then(usuarioResponse => {
         expect(usuarioResponse.status).to.eq(201); // Verify the user creation status is 201
         expect(usuarioResponse.body.message).to.eq('Cadastro realizado com sucesso'); // Confirm success message
 
         // Step 3: Authenticate and obtain the token
         const { email, password } = novoUsuario;
-        cy.request('POST', apiURL.login, { email, password }).then(response => {
-          expect(response.status).to.eq(200); // Verify successful authentication
-          authToken = response.body.authorization; // Store the authentication token
+        cy.request('POST', '/login', { email, password }).then(loginResponse => {
+          expect(loginResponse.status).to.eq(200); // Verify successful authentication
+          authToken = loginResponse.body.authorization; // Store the authentication token
         });
       });
     });
@@ -36,7 +36,7 @@ describe('Shopping Cart API Tests', () => {
     // Create a cart with specified products
     cy.request({
       method: 'POST',
-      url: apiURL.carrinhos,
+      url: '/carrinhos',
       headers: {
         Authorization: authToken
       },
@@ -61,7 +61,7 @@ describe('Shopping Cart API Tests', () => {
   it('Delete the cart', () => {
     cy.request({
       method: 'DELETE',
-      url: `${apiURL.carrinhos}/concluir-compra`,
+      url: `/carrinhos/concluir-compra`,
       headers: {
         Authorization: authToken
       }
