@@ -1,4 +1,4 @@
-# Testes de API com Cypress
+# Testes de API ServRest com Cypress
 
 Este repositório contém testes de API automatizados usando [Cypress](https://www.cypress.io/). A API que estamos testando é a [**ServeRest**](https://serverest.dev/), que é uma API REST gratuita que simula uma loja virtual.
 
