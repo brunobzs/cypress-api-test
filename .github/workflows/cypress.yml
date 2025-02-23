@@ -6,6 +6,8 @@ on:
   pull_request:
     branches:
       - master
+  workflow_dispatch:
+
 jobs:
   cypress-run:
     runs-on: ubuntu-22.04
